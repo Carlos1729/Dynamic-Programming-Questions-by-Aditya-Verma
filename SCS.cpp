@@ -1,34 +1,69 @@
-// Shortest Common Supersequence
-#include <bits/stdc++.h>
-using namespace std;
-
-int LCS(string X, string Y, int n, int m) {
-	int dp[n + 1][m + 1]; // DP - matrix
-
-	// base case of recursion --> for initialization of dp - matrix
-	for (int i = 0; i <= n; i++)
-		for (int j = 0; j <= m; j++)
-			if (i == 0 || j == 0)
-				dp[i][j] = 0;
-
-	for (int i = 1; i <= n; i++)
-		for (int j = 1; j <= m; j++)
-			if (X[i - 1] == Y[j - 1]) // when last character is same
-				dp[i][j] = 1 + dp[i - 1][j - 1];
-			else // when last character is not same -> pick max
-				dp[i][j] = max(dp[i][j - 1], dp[i - 1][j]);
-
-	return dp[n][m];
-}
-
-int SCS(string X, string Y, int n, int m) {
-	return m + n - LCS(X, Y, n, m);
-}
-
-signed main() {
-	string X, Y; cin >> X >> Y;
-	int n = X.length(), m = Y.length();
-
-	cout << SCS(X, Y, n, m) << endl;
-	return 0;
-}
+class Solution {
+public:
+    string shortestCommonSupersequence(string s1, string s2) {
+        int n=s1.size(); 
+        int m=s2.size();
+        int t[n+1][m+1]; //table generated while computing LCS length
+        string res; // result	
+        // compute LCS length using tabulation  
+        
+    //Time - O(mn)
+    //Space - max O(m,n || m+n)
+        
+//     TIme O(MN) dp,
+// Space O(MN) * O(string), but actually we can also save the storage of string.
+        
+    // the only difference is that we add it even when they are not equal 
+    for(int i=0;i<=n;i++)
+    {
+        for(int j=0;j<=m;j++)
+        {
+            if(i==0||j==0)
+                t[i][j]=0;
+            else if(s1[i-1]==s2[j-1])
+            {
+                t[i][j]=1+t[i-1][j-1];
+            }
+            else
+            {
+                t[i][j]=max(t[i-1][j],t[i][j-1]);
+            }
+        }
+    }     
+       //print lcs
+    int i=n,j=m;
+    while(i>0 && j>0)
+    {
+        if(s1[i-1]==s2[j-1])
+        {
+            res.push_back(s1[i-1]);
+            i--;
+            j--;
+        }
+        else
+        {
+            if(t[i-1][j]>t[i][j-1])
+            {
+                res.push_back(s1[i-1]);//We do consider even when its not equal as it would be needed 
+                i--;
+            } else{
+                res.push_back(s2[j-1]);
+                j--;
+            }
+        }
+    }
+    while(i>0) // if s1 characters are still left
+    {
+        res.push_back(s1[i-1]);
+        i--;
+    }
+    while(j>0) //if s2 characters are still left
+    {
+        res.push_back(s2[j-1]);
+        j--;
+        
+    }
+        // reverse(res.begin(),res.end()); 
+        return res;
+    }
+};
